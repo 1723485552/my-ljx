@@ -1,0 +1,43 @@
+# 军规级 Dart 静态分析强约束 (Zero Warnings)
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # 零警告准则：将所有 Warning / Info 提升为错误，强制阻断
+    unused_import: error
+    unused_local_variable: error
+    dead_code: error
+    prefer_final_fields: error
+    always_specify_types: error
+    avoid_dynamic_calls: error
+    missing_required_param: error
+    missing_return: error
+    invalid_annotation_target: error
+    avoid_print: error
+  exclude:
+    - lib/generated/**
+
+linter:
+  rules:
+    # 强类型与不可变性
+    - always_declare_return_types
+    - prefer_const_constructors
+    - prefer_const_constructors_in_immutables
+    - prefer_const_literals_to_create_immutables
+    - prefer_final_in_for_each
+    - prefer_final_locals
+    - avoid_dynamic_calls
+    # 代码洁癖
+    - avoid_relative_lib_imports
+    - directives_ordering
+    - sort_constructors_first
+    - no_leading_underscores_for_library_prefixes
+    - camel_case_types
+    - file_names
+    - non_constant_identifier_names
+    - constant_identifier_names
+    - type_annotate_public_apis
+    # 防御性
+    - avoid_catches_without_on_clauses
+    - avoid_equals_and_hash_code_on_mutable_classes
+    - only_throw_errors
