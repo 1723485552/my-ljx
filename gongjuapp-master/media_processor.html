@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>极速音视频工坊 · Media Studio (Pure-Dart Demuxer 2.2.0)</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; background:#09090b; color:#f4f4f5; }
+  header { background:#09090b; padding:14px; text-align:center; font-size:13px; letter-spacing:2px; font-weight:700; border-bottom:1px solid #27272a; }
+  .tabs { display:flex; border-bottom:1px solid #27272a; }
+  .tab { flex:1; text-align:center; padding:12px; font-size:12px; color:#a1a1aa; cursor:pointer; border-bottom:2px solid transparent; }
+  .tab.on { color:#38bdf8; border-bottom-color:#38bdf8; font-weight:700; }
+  .panel { padding:16px; display:none; }
+  .panel.on { display:block; }
+  .card { background:#18181b; border:1px solid #27272a; border-radius:16px; padding:16px; }
+  .row { display:flex; align-items:center; gap:8px; }
+  .row .spacer { flex:1; }
+  .title { font-size:13px; font-weight:700; color:#f4f4f5; }
+  .meta { font-size:12px; color:#a1a1aa; margin-top:4px; }
+  .divider { height:1px; background:#27272a; margin:16px 0; }
+  button.tonal { background:#27272a; color:#f4f4f5; border:none; border-radius:8px; padding:6px 12px; font-size:12px; cursor:pointer; }
+  button.primary { width:100%; height:48px; margin-top:20px; background:#38bdf8; color:#09090b; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+  button.primary:disabled { opacity:.5; cursor:not-allowed; }
+  .result { margin-top:20px; background:#0c191d; border:1px solid #0369a1; border-radius:16px; padding:16px; }
+  .result .title { color:#f4f4f5; font-size:14px; font-weight:700; }
+  .chip { background:#0369a1; border:none; color:#38bdf8; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700; }
+  .hint { font-size:12px; color:#52525b; margin-top:12px; }
+  .green { color:#10b981; }
+  .err { margin-top:20px; background:#271316; border:1px solid #7f1d1d; border-radius:12px; padding:14px; display:flex; gap:10px; align-items:flex-start; }
+  .err .et { font-size:12px; color:#fca5a5; }
+  .presets { display:flex; gap:8px; margin-top:8px; }
+  .preset { flex:1; background:#18181b; border:1px solid #27272a; border-radius:12px; padding:12px; cursor:pointer; }
+  .preset.on { background:#27272a; border-color:#10b981; }
+  .preset .pt { font-size:12px; font-weight:700; }
+  .preset.on .pt { color:#10b981; }
+  .preset .ps { font-size:10px; color:#71717a; margin-top:4px; }
+  .engine { background:#18181b; border:1px solid #27272a; border-radius:16px; padding:16px; margin-top:20px; }
+  .engine .et { font-size:13px; font-weight:700; color:#f4f4f5; display:flex; align-items:center; gap:8px; }
+  .engine .ed { font-size:12px; color:#a1a1aa; margin-top:8px; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#323232; color:#fff; padding:10px 18px; border-radius:8px; font-size:14px; opacity:0; transition:.2s; z-index:20; pointer-events:none; }
+  .toast.show { opacity:1; }
+  .spin { width:16px; height:16px; border:2px solid rgba(0,0,0,.4); border-top-color:#09090b; border-radius:50%; animation:r .8s linear infinite; }
+  @keyframes r { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<header>MEDIA STUDIO</header>
+<div class="tabs">
+  <div class="tab on" id="tabA" onclick="switchTab('A')">30ms 无损抽音频</div>
+  <div class="tab" id="tabB" onclick="switchTab('B')">定向视频速压</div>
+</div>
+
+<div class="panel on" id="panelA">
+  <div class="card">
+    <div class="row">
+      <span style="color:#38bdf8;font-size:20px;">🎬</span>
+      <span class="title">源视频文件</span>
+      <div class="spacer"></div>
+      <button class="tonal" id="pickBtn" onclick="pickFile()">选择本地视频</button>
+    </div>
+    <div id="metaArea">
+      <div class="divider"></div>
+      <div class="hint">支持任意 MP4 / MOV 格式视频，直接在内存中毫秒级抽取原始 AAC 音轨</div>
+    </div>
+  </div>
+
+  <button class="primary" id="extractBtn" disabled onclick="extract()">
+    <span>⚡</span><span id="extractLabel">一键 30ms 无损提取音频 (.AAC)</span>
+  </button>
+
+  <div id="resultArea"></div>
+</div>
+
+<div class="panel" id="panelB">
+  <div class="sub" style="font-size:11px;letter-spacing:1.2px;font-weight:600;color:#a1a1aa;">定向压缩预设 / TARGET PRESET</div>
+  <div class="presets">
+    <div class="preset on" id="p_wechat25" onclick="selPreset('wechat25')">
+      <div class="pt">微信 25MB 限额</div>
+      <div class="ps">自动计算码率 · 适合微信群发</div>
+    </div>
+    <div class="preset" id="p_small720p" onclick="selPreset('small720p')">
+      <div class="pt">720P 高清平衡</div>
+      <div class="ps">等比缩减分辨率 · 画质清晰</div>
+    </div>
+  </div>
+  <div class="engine">
+    <div class="et">⚙️ 定向定容压制</div>
+    <div class="ed">根据目标文件大小（如 24.5MB）动态计算压缩比，杜绝微信提示“文件过大无法发送”。</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let state = { bytes:null, name:null, size:0, aac:null, sr:44100, ch:2, frames:0, ms:0, extracting:false, err:null, preset:'wechat25' };
+const $ = id => document.getElementById(id);
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
+function switchTab(t){
+  $('tabA').classList.toggle('on', t==='A'); $('tabB').classList.toggle('on', t==='B');
+  $('panelA').classList.toggle('on', t==='A'); $('panelB').classList.toggle('on', t==='B');
+}
+
+function pickFile(){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='video/mp4,video/quicktime,video/*';
+  inp.onchange = () => {
+    const f = inp.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      const buf = new Uint8Array(r.result);
+      state.bytes = buf; state.name = f.name; state.size = buf.length; state.aac = null; state.err = null;
+      $('metaArea').innerHTML = '<div class="divider"></div>'+
+        '<div class="meta">文件名: '+f.name+'</div>'+
+        '<div class="meta">文件体积: '+(buf.length/1048576).toFixed(2)+' MB</div>'+
+        '<div class="meta green">引擎状态: 纯 Dart 内存解复用就绪 (0 依赖 · 毫秒级)</div>';
+      $('pickBtn').textContent='更换视频'; $('extractBtn').disabled=false; $('resultArea').innerHTML='';
+      toast('视频载入成功: '+f.name);
+    };
+    r.readAsArrayBuffer(f);
+  };
+  inp.click();
+}
+
+function scanBoxes(buf, dv, start, len){
+  const res=[]; let pos=start; const end=start+len;
+  while(pos+8<=end && pos+8<=buf.length){
+    let size=dv.getUint32(pos);
+    const type=String.fromCharCode(buf[pos+4],buf[pos+5],buf[pos+6],buf[pos+7]);
+    let hl=8;
+    if(size===1){ if(pos+16>end||pos+16>buf.length) break; size=Number(dv.getBigUint64(pos+8)); hl=16; }
+    else if(size===0){ size=end-pos; }
+    if(size<hl) break;
+    res.push({type,offset:pos+hl,size:size-hl});
+    pos+=size;
+  }
+  return res;
+}
+
+function demux(buf){
+  const dv=new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+  const top=scanBoxes(buf,dv,0,buf.length);
+  const moov=top.find(b=>b.type==='moov');
+  if(!moov) throw new Error('未在文件中检测到 MP4 元数据 (moov box)');
+  const traks=scanBoxes(buf,dv,moov.offset,moov.size).filter(b=>b.type==='trak');
+  let audioTrak=null;
+  for(const trak of traks){
+    const mdias=scanBoxes(buf,dv,trak.offset,trak.size).filter(b=>b.type==='mdia');
+    if(!mdias.length) continue;
+    const hdlrs=scanBoxes(buf,dv,mdias[0].offset,mdias[0].size).filter(b=>b.type==='hdlr');
+    if(hdlrs.length && hdlrs[0].size>=12){
+      const h=String.fromCharCode(buf[hdlrs[0].offset+8],buf[hdlrs[0].offset+9],buf[hdlrs[0].offset+10],buf[hdlrs[0].offset+11]);
+      if(h==='soun'){ audioTrak=trak; break; }
+    }
+  }
+  if(!audioTrak) throw new Error('该视频文件未包含有效音轨 (无 soun 轨道)');
+  const mdia=scanBoxes(buf,dv,audioTrak.offset,audioTrak.size).find(b=>b.type==='mdia');
+  const minf=scanBoxes(buf,dv,mdia.offset,mdia.size).find(b=>b.type==='minf');
+  const stbl=scanBoxes(buf,dv,minf.offset,minf.size).find(b=>b.type==='stbl');
+  const boxes=scanBoxes(buf,dv,stbl.offset,stbl.size);
+  const stsd=boxes.find(b=>b.type==='stsd');
+  const stsz=boxes.find(b=>b.type==='stsz');
+  const stsc=boxes.find(b=>b.type==='stsc');
+  const stco=boxes.find(b=>b.type==='stco');
+  const co64=boxes.find(b=>b.type==='co64');
+  if(!stsz||!stsc||(!stco&&!co64)) throw new Error('音轨索引表不完整，无法解包');
+  let sr=44100, ch=2;
+  if(stsd && stsd.size>=8){
+    const p=stsd.offset+8;
+    if(p+8<=stsd.offset+stsd.size){
+      const esize=dv.getUint32(p);
+      if(p+esize<=buf.length && esize>=36){
+        ch=dv.getUint16(p+8+16);
+        const rr=dv.getUint32(p+8+24)>>16;
+        if(rr>0) sr=rr; if(ch===0) ch=2;
+      }
+    }
+  }
+  const defSize=dv.getUint32(stsz.offset+4);
+  const sc=dv.getUint32(stsz.offset+8);
+  const sizes=new Array(sc);
+  if(defSize!==0){ for(let i=0;i<sc;i++) sizes[i]=defSize; }
+  else { let ptr=stsz.offset+12; for(let i=0;i<sc;i++){ if(ptr+4>buf.length) break; sizes[i]=dv.getUint32(ptr); ptr+=4; } }
+  const chunks=[]; let cptr;
+  if(stco){ const cnt=dv.getUint32(stco.offset+4); cptr=stco.offset+8; for(let i=0;i<cnt;i++){ if(cptr+4>buf.length) break; chunks.push(dv.getUint32(cptr)); cptr+=4; } }
+  else { const cnt=dv.getUint32(co64.offset+4); cptr=co64.offset+8; for(let i=0;i<cnt;i++){ if(cptr+8>buf.length) break; chunks.push(Number(dv.getBigUint64(cptr))); cptr+=8; } }
+  const stscCnt=dv.getUint32(stsc.offset+4); const ents=[]; let sp=stsc.offset+8;
+  for(let i=0;i<stscCnt;i++){ if(sp+12>buf.length) break; ents.push({fc:dv.getUint32(sp),spc:dv.getUint32(sp+4)}); sp+=12; }
+  if(!chunks.length||!ents.length||!sizes.length) throw new Error('音轨索引数据为空');
+  const csc=chunks.map(()=>0);
+  for(let i=0;i<ents.length;i++){
+    const s=ents[i].fc-1; const e=(i+1<ents.length)?(ents[i+1].fc-1):chunks.length; const spc=ents[i].spc;
+    for(let c=s;c<e&&c<chunks.length;c++) csc[c]=spc;
+  }
+  const freq=[96000,88200,64000,48000,44100,32000,24000,22050,16000,12000,11025,8000,7350];
+  let fi=freq.indexOf(sr); if(fi<0) fi=4; const profile=1;
+  let total=0; for(const s of sizes) total+=s+7;
+  const out=new Uint8Array(total); let o=0; let si=0;
+  for(let c=0;c<chunks.length;c++){
+    let off=chunks[c]; const n=csc[c];
+    for(let s=0;s<n;s++){
+      if(si>=sizes.length) break;
+      const len=sizes[si]; const fl=len+7;
+      out[o++]=0xFF; out[o++]=0xF1;
+      out[o++]=((profile&3)<<6)|((fi&0xF)<<2)|((ch>>2)&1);
+      out[o++]=((ch&3)<<6)|((fl>>11)&3);
+      out[o++]=((fl>>3)&0xFF);
+      out[o++]=((fl&7)<<5)|0x1F;
+      out[o++]=0xFC;
+      if(off+len<=buf.length){ out.set(buf.subarray(off,off+len),o); o+=len; }
+      off+=len; si++;
+    }
+  }
+  return { aac: out.subarray(0,o), sr, ch, frames: si };
+}
+
+function extract(){
+  if(!state.bytes || state.extracting) return;
+  state.extracting=true; state.err=null;
+  $('extractLabel').textContent='正在极速解复用...';
+  $('extractBtn').innerHTML='<span class="spin"></span><span>正在极速解复用...</span>';
+  $('extractBtn').disabled=true;
+  setTimeout(()=>{
+    const t0=performance.now();
+    try{
+      const r=demux(state.bytes);
+      const ms=Math.max(1,Math.round(performance.now()-t0));
+      state.extracting=false; state.aac=r.aac; state.sr=r.sr; state.ch=r.ch; state.frames=r.frames; state.ms=ms;
+      $('extractLabel').textContent='一键 30ms 无损提取音频 (.AAC)';
+      $('extractBtn').innerHTML='<span>⚡</span><span>一键 30ms 无损提取音频 (.AAC)</span>';
+      $('extractBtn').disabled=false;
+      const base=(state.name||'Audio').split('.').slice(0,-1).join('.')||'Audio';
+      state.outName=base+'_extracted.aac';
+      $('resultArea').innerHTML='<div class="result"><div style="display:flex;align-items:center;gap:8px;">'+
+        '<span style="color:#38bdf8;font-size:20px;">✅</span><span class="title">无损音轨已就绪</span>'+
+        '<div style="flex:1"></div><span class="chip">耗时 '+ms+' ms</span></div>'+
+        '<div class="meta" style="margin-top:12px;">音频体积: '+(r.aac.length/1024).toFixed(1)+' KB</div>'+
+        '<div class="meta">音频规格: '+r.sr+' Hz · '+(r.ch===2?'立体声(双声道)':'单声道')+' · '+r.frames+' AAC 采样帧</div>'+
+        '<div class="meta" style="color:rgba(56,189,248,.8);">封装格式: 原生标准 ADTS AAC (0 转码损耗)</div>'+
+        '<button class="primary" style="background:#38bdf8;margin-top:16px;" onclick="downloadAac()">⬇️ 下载无损音频文件 (.AAC)</button></div>';
+      toast('音频抽取完成 (耗时 '+ms+'ms)');
+    }catch(e){
+      state.extracting=false; state.err=e.message;
+      $('extractLabel').textContent='一键 30ms 无损提取音频 (.AAC)';
+      $('extractBtn').innerHTML='<span>⚡</span><span>一键 30ms 无损提取音频 (.AAC)</span>';
+      $('extractBtn').disabled=false;
+      $('resultArea').innerHTML='<div class="err"><span style="color:#f87171;font-size:20px;">⚠️</span>'+
+        '<div class="et">解析提示: '+e.message+'</div></div>';
+      toast('抽取失败: '+e.message);
+    }
+  }, 30);
+}
+
+function downloadAac(){
+  if(!state.aac) return;
+  const blob=new Blob([state.aac],{type:'audio/aac'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=state.outName||'audio_extracted.aac'; a.click();
+  URL.revokeObjectURL(url);
+  toast('已开始下载: '+(state.outName||'audio_extracted.aac'));
+}
+function selPreset(id){
+  state.preset=id;
+  $('p_wechat25').classList.toggle('on', id==='wechat25');
+  $('p_small720p').classList.toggle('on', id==='small720p');
+}
+</script>
+</body>
+</html>

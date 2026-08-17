@@ -1,0 +1,10 @@
+﻿
+e: file:///E:/NovaToolBox/android/app/src/main/kotlin/com/novatoolbox/agentforge/features/text_tools/ui/TextReverserScr
+een.kt:199:62 Unresolved reference 'getText'.
+e: file:///E:/NovaToolBox/android/app/src/main/kotlin/com/novatoolbox/agentforge/features/text_tools/ui/TextReverserScr
+een.kt:201:62 Unresolved reference 'text'.
+e: file:///E:/NovaToolBox/android/app/src/main/kotlin/com/novatoolbox/agentforge/features/text_tools/ui/TextReverserScr
+een.kt:281:47 Unresolved reference 'setText'.
+FAILURE: Build failed with an exception.
+
+

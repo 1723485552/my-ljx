@@ -1,0 +1,26 @@
+﻿====== FISH.EXE STATIC ANALYSIS REPORT ======
+
+1. BASIC PE INFORMATION
+File Size: 5803008 bytes (approx 5.5 MB)
+Architecture: x86 (32-bit)
+Compilation: 
+Sections: 5
+Subsystem: Windows GUI
+
+2. SECTION ANALYSIS
+===================
+  [0] .text : Entropy = 6.56 (Normal)
+  [1] .rdata : Entropy = 6.3 (Normal)
+  [2] .data : Entropy = 5.3 (Normal)
+  [3] .rsrc : Entropy = 5.36 (Normal)
+  [4] .reloc : Entropy = 6.67 (Normal)
+
+3. PACKING STATUS
+==================
+Max Entropy: 7
+STATUS: NOT PACKED (entropy under 7.0)
+
+====== SUMMARY ======
+Technology: Native x86 (MSVC C/C++ or Win32 API application)
+Packing: NO - Uncompressed
+Next Steps: Use Ghidra or IDA Pro for disassembly

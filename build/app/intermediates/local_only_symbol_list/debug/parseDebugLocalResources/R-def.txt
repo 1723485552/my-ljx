@@ -1,0 +1,12 @@
+R_DEF: Internal format may change without notice
+local
+color bg_dark
+drawable ic_memory
+drawable ic_mood
+drawable ic_text
+drawable launch_background
+mipmap ic_launcher
+style LaunchTheme
+style NormalTheme
+style Theme.NovaToolBox
+xml file_paths

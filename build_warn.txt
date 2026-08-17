@@ -1,0 +1,5 @@
+﻿
+w: file:///E:/NovaToolBox/android/app/src/main/kotlin/com/novatoolbox/agentforge/MainActivity.kt:178:57 'val Icons.Roun
+ded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
+
+

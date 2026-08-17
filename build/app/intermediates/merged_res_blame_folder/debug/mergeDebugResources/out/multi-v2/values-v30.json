@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.novatoolbox.agentforge.app-mergeDebugResources-51:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\17234\\.gradle\\caches\\9.1.0\\transforms\\9b6eff401ab6f74c3306d5556d229e7c\\workspace\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}

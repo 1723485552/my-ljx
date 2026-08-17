@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>365 情绪热力图 · Mood Matrix</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; background:#09090b; color:#f4f4f5; }
+  header { background:#09090b; padding:14px; text-align:center; font-size:13px; letter-spacing:2px; font-weight:700; border-bottom:1px solid #27272a; display:flex; align-items:center; justify-content:center; gap:10px; }
+  header .act { position:absolute; right:14px; cursor:pointer; color:#f4f4f5; font-size:18px; }
+  .panel { padding:16px; }
+  .ov { background:#18181b; border:1px solid #27272a; border-radius:16px; padding:16px; display:flex; }
+  .ov .col { flex:1; }
+  .ov .k { font-size:11px; color:#a1a1aa; }
+  .ov .v { font-size:18px; font-weight:700; color:#f4f4f5; margin-top:4px; }
+  .ov .v.g { color:#10b981; }
+  .sep { width:1px; height:32px; background:#27272a; margin:0 16px; }
+  .chips { display:flex; gap:6px; overflow-x:auto; margin:12px 0; }
+  .chip { flex:0 0 auto; border:1px solid #27272a; background:#18181b; color:#a1a1aa; border-radius:999px; padding:5px 12px; font-size:11px; cursor:pointer; display:flex; align-items:center; gap:5px; white-space:nowrap; }
+  .chip.on { background:#f4f4f5; color:#09090b; border-color:transparent; font-weight:700; }
+  .chip .dot { width:8px; height:8px; border-radius:50%; }
+  .poster { background:#101012; border:1px solid #27272a; border-radius:16px; padding:16px; margin-top:4px; }
+  .poster .ph { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:#f4f4f5; }
+  .poster .ph .hint { margin-left:auto; font-size:10px; color:#71717a; font-weight:400; }
+  .grid { display:flex; gap:2.5px; overflow-x:auto; margin-top:14px; }
+  .col { display:flex; flex-direction:column; gap:2.5px; }
+  .cell { width:11px; height:11px; border-radius:2px; cursor:pointer; }
+  .cell:hover { outline:1px solid #fff; }
+  .legend { display:flex; align-items:center; justify-content:flex-end; gap:4px; margin-top:14px; font-size:9px; color:#71717a; }
+  .legend .lb { width:10px; height:10px; border-radius:2px; }
+  .today { outline:1px solid #fff; }
+  button.main { width:100%; height:46px; margin-top:14px; background:#f4f4f5; color:#09090b; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#323232; color:#fff; padding:10px 18px; border-radius:8px; font-size:14px; opacity:0; transition:.2s; z-index:20; pointer-events:none; }
+  .toast.show { opacity:1; }
+  .sheet { position:fixed; left:0; right:0; bottom:0; background:#18181b; border-radius:20px 20px 0 0; padding:16px 20px; transform:translateY(100%); transition:transform .22s ease; z-index:30; }
+  .sheet.show { transform:translateY(0); }
+  .sheet .row { display:flex; align-items:center; gap:8px; }
+  .sheet .moods { display:flex; justify-content:space-between; margin:16px 0; }
+  .sheet .m { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; }
+  .sheet .m .box { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#09090b; font-size:20px; border:2px solid transparent; }
+  .sheet .m .lb { font-size:10px; color:#a1a1aa; }
+  .sheet .m.on .box { border-color:#fff; }
+  .sheet .m.on .lb { color:#fff; font-weight:700; }
+  .sheet input { width:100%; background:#27272a; border:none; outline:none; color:#fff; font-size:13px; padding:10px 12px; border-radius:12px; margin:8px 0; }
+  .sheet button.go { width:100%; height:44px; background:#f4f4f5; color:#09090b; border:none; border-radius:12px; font-weight:700; cursor:pointer; font-size:13px; }
+  .mask { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:29; display:none; }
+  .mask.show { display:block; }
+</style>
+</head>
+<body>
+<header>2026 MOOD MATRIX <span class="act" onclick="exportPoster()">⤴</span></header>
+<div class="panel">
+  <div class="ov">
+    <div class="col"><div class="k">已记录天数</div><div class="v" id="recCount">0 / 365 天</div></div>
+    <div class="sep"></div>
+    <div class="col"><div class="k">年度心绪覆盖率</div><div class="v g" id="rate">0.0%</div></div>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="poster">
+    <div class="ph">⬡ 2026 365 像素方阵 <span class="hint">点击方块定格心绪</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="legend"><span>未记录</span><span class="lb" style="background:#1F1F23"></span>
+      <span class="lb" style="background:#10B981"></span><span class="lb" style="background:#38BDF8"></span>
+      <span class="lb" style="background:#A855F7"></span><span class="lb" style="background:#FBBF24"></span>
+      <span class="lb" style="background:#71717A"></span></div>
+  </div>
+
+  <button class="main" onclick="openLogger(todayKey())">🗓 定格今日心绪</button>
+</div>
+
+<div class="mask" id="mask"></div>
+<div class="sheet" id="sheet">
+  <div class="row"><b id="sheetDate" style="color:#f4f4f5;font-size:16px;"></b><span style="color:#71717a;font-size:13px;margin-left:8px;">心绪定格</span>
+    <span style="flex:1"></span><span id="clearBtn" style="color:#EF4444;font-size:12px;cursor:pointer;display:none;" onclick="clearRecord()">清除</span></div>
+  <div class="moods" id="sheetMoods"></div>
+  <input id="note" maxlength="20" placeholder="今日一句话备忘 (选填，最多20字)..." />
+  <button class="go" onclick="saveRecord()">确认保存心绪</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const MOODS = [
+  {id:0,label:'能量充实',color:'#10B981',icon:'⚡'},
+  {id:1,label:'平静专注',color:'#38BDF8',icon:'☘'},
+  {id:2,label:'灵感突破',color:'#A855F7',icon:'💡'},
+  {id:3,label:'焦虑疲惫',color:'#FBBF24',icon:'✶'},
+  {id:4,label:'放空自省',color:'#71717A',icon:'☾'},
+];
+const YEAR = 2026;
+const isLeap = (YEAR%4===0&&YEAR%100!==0)||(YEAR%400===0);
+const TOTAL = isLeap?366:365;
+const firstDay = new Date(YEAR,0,1);
+let records = {};
+let filter = -1;
+let selMood = 0;
+let sheetKey = null;
+
+const $ = id => document.getElementById(id);
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1200); }
+function keyOf(d){ const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+function todayKey(){ return keyOf(new Date()); }
+function daysSince(){ const now=new Date(); const diff=Math.floor((now-firstDay)/86400000); return Math.max(30,Math.min(260,diff)); }
+
+function seed(){
+  const n=daysSince();
+  for(let i=0;i<n;i++){
+    if(i%5===0) continue;
+    const d=new Date(firstDay); d.setDate(d.getDate()+i);
+    const k=keyOf(d); const mood=(i*7+(i%3))%5;
+    records[k]={mood, note:(i%4===0?'专注推进核心里程碑':'日常复盘与思考')};
+  }
+}
+function fmtDateHuman(k){ const [y,m,d]=k.split('-'); return y+'/'+parseInt(m)+'/'+parseInt(d); }
+
+function renderChips(){
+  const c=$('chips'); c.innerHTML='';
+  const all=document.createElement('div'); all.className='chip'+(filter===-1?' on':'');
+  all.textContent='全部'; all.onclick=()=>{filter=-1;render();}; c.appendChild(all);
+  MOODS.forEach(m=>{
+    const cnt=Object.values(records).filter(r=>r.mood===m.id).length;
+    const el=document.createElement('div'); el.className='chip'+(filter===m.id?' on':'');
+    el.innerHTML='<span class="dot" style="background:'+m.color+'"></span>'+m.label+' ('+cnt+')';
+    el.onclick=()=>{ filter=filter===m.id?-1:m.id; render(); }; c.appendChild(el);
+  });
+}
+function renderGrid(){
+  const grid=$('grid'); grid.innerHTML='';
+  const startOffset=firstDay.getDay(); // 0=Sun; 2026-01-01 is Thu => 4
+  const startIdx=(startOffset+6)%7; // convert to Mon=0
+  const totalCols=Math.ceil((startIdx+TOTAL)/7);
+  for(let col=0; col<totalCols; col++){
+    const colEl=document.createElement('div'); colEl.className='col';
+    for(let row=0; row<7; row++){
+      const dayIdx=col*7+row-startIdx;
+      if(dayIdx<0||dayIdx>=TOTAL){ const s=document.createElement('div'); s.style.width='11px'; s.style.height='13.5px'; colEl.appendChild(s); continue; }
+      const d=new Date(firstDay); d.setDate(d.getDate()+dayIdx);
+      const k=keyOf(d); const rec=records[k];
+      let color='#1F1F23';
+      if(rec){ if(filter===-1||filter===rec.mood) color=MOODS[rec.mood].color; else color='#18181b'; }
+      const cell=document.createElement('div'); cell.className='cell'+(k===todayKey()?' today':'');
+      cell.style.background=color;
+      cell.title=k+(rec?(' ('+MOODS[rec.mood].label+') '+rec.note):' (未记录)');
+      cell.onclick=()=>openLogger(k);
+      colEl.appendChild(cell);
+    }
+    grid.appendChild(colEl);
+  }
+}
+function renderStats(){
+  const cnt=Object.keys(records).length;
+  $('recCount').textContent=cnt+' / '+TOTAL+' 天';
+  $('rate').textContent=((cnt/TOTAL)*100).toFixed(1)+'%';
+}
+function render(){ renderChips(); renderGrid(); renderStats(); }
+
+function openLogger(k){
+  sheetKey=k; selMood=records[k]?records[k].mood:0;
+  $('sheetDate').textContent=fmtDateHuman(k);
+  $('note').value=records[k]?records[k].note:'';
+  $('clearBtn').style.display=records[k]?'inline':'none';
+  const m=$('sheetMoods'); m.innerHTML='';
+  MOODS.forEach(mo=>{
+    const el=document.createElement('div'); el.className='m'+(mo.id===selMood?' on':'');
+    el.innerHTML='<div class="box" style="background:'+mo.color+'">'+mo.icon+'</div><div class="lb">'+mo.label+'</div>';
+    el.onclick=()=>{ selMood=mo.id; openLogger(k); };
+    m.appendChild(el);
+  });
+  $('mask').classList.add('show'); $('sheet').classList.add('show');
+}
+function saveRecord(){
+  records[sheetKey]={mood:selMood, note:$('note').value.trim()};
+  closeSheet(); render(); toast('心绪已定格: '+sheetKey);
+}
+function clearRecord(){ delete records[sheetKey]; closeSheet(); render(); toast('已清除该日记录'); }
+function closeSheet(){ $('mask').classList.remove('show'); $('sheet').classList.remove('show'); }
+$('mask').onclick=closeSheet;
+
+function exportPoster(){
+  const totalCols=Math.ceil(((firstDay.getDay()+6)%7+TOTAL)/7);
+  const box=11,gap=2.5,pad=16,labelH=20,legendH=24;
+  const w=totalCols*(box+gap)+2*pad;
+  const h=7*(box+gap)+2*pad+labelH+legendH;
+  const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+  const x=cv.getContext('2d');
+  x.fillStyle='#101012'; x.fillRect(0,0,w,h);
+  x.fillStyle='#38BDF8'; x.font='bold 12px sans-serif'; x.fillText(YEAR+' 365 像素方阵',pad,pad+12);
+  const sx=pad, sy=pad+labelH;
+  const startIdx=(firstDay.getDay()+6)%7;
+  for(let col=0; col<totalCols; col++){
+    for(let row=0; row<7; row++){
+      const dayIdx=col*7+row-startIdx;
+      const cx=sx+col*(box+gap), cy=sy+row*(box+gap);
+      if(dayIdx<0||dayIdx>=TOTAL){ continue; }
+      const d=new Date(firstDay); d.setDate(d.getDate()+dayIdx);
+      const k=keyOf(d); const rec=records[k];
+      let color='#1F1F23';
+      if(rec){ if(filter===-1||filter===rec.mood) color=MOODS[rec.mood].color; else color='#18181b'; }
+      x.fillStyle=color; x.fillRect(cx,cy,box,box);
+    }
+  }
+  cv.toBlob(b=>{
+    const url=URL.createObjectURL(b); const a=document.createElement('a');
+    a.href=url; a.download='Mood_Heatmap_'+YEAR+'.png'; a.click(); URL.revokeObjectURL(url);
+    toast('年度心绪海报已开始下载');
+  });
+}
+
+seed(); render();
+</script>
+</body>
+</html>

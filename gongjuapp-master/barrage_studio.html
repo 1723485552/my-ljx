@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>全屏视显标牌 v2.1 · Precision Display Studio</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Inter","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; background:#09090b; color:#f4f4f5; }
+  header { background:#09090b; padding:14px; text-align:center; font-size:14px; letter-spacing:2px; font-weight:700; border-bottom:1px solid #27272a; }
+  .panel { padding:20px 20px 40px; }
+  .monitor { height:130px; border-radius:16px; border:1px solid #27272a; position:relative; overflow:hidden; box-shadow:0 8px 16px rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; }
+  .monitor .grid { position:absolute; inset:0; opacity:.5; }
+  .monitor .tag { position:absolute; top:10px; left:12px; font-size:9px; letter-spacing:1.2px; font-weight:600; }
+  .monitor .txt { font-weight:900; white-space:nowrap; }
+  .title { font-size:11px; letter-spacing:1.5px; font-weight:600; color:#a1a1aa; margin:20px 0 8px; }
+  .modes { display:flex; gap:8px; }
+  .mode { flex:1; text-align:center; padding:12px 8px; background:#18181b; border:1px solid #27272a; border-radius:10px; cursor:pointer; }
+  .mode .m1 { font-size:13px; font-weight:700; color:#a1a1aa; }
+  .mode .m2 { font-size:10px; color:#71717a; margin-top:4px; }
+  .mode.active { background:#27272a; border-color:#f4f4f5; }
+  .mode.active .m1 { color:#f4f4f5; }
+  .mode.active .m2 { color:#d4d4d8; }
+  .field { margin-top:20px; background:#18181b; border:1px solid #27272a; border-radius:12px; padding:0 16px; }
+  .field input { width:100%; background:transparent; border:none; outline:none; color:#f4f4f5; font-size:16px; font-weight:600; letter-spacing:.5px; padding:14px 0; }
+  .palettes { display:flex; gap:10px; overflow-x:auto; }
+  .palette { display:flex; align-items:center; gap:8px; padding:10px 14px; background:#18181b; border-radius:10px; border:1px solid #27272a; cursor:pointer; white-space:nowrap; }
+  .palette .dot { width:12px; height:12px; border-radius:50%; border:1px solid rgba(0,0,0,.15); }
+  .palette .nm { font-size:12px; color:#a1a1aa; }
+  .palette.active { border-color:#f4f4f5; }
+  .palette.active .nm { color:#f4f4f5; font-weight:700; }
+  .engines { display:flex; gap:6px; }
+  .engine { flex:1; text-align:center; padding:10px 0; background:#18181b; border:1px solid #27272a; border-radius:10px; cursor:pointer; font-size:12px; font-weight:700; color:#a1a1aa; }
+  .engine.active { background:#27272a; border-color:#f4f4f5; color:#f4f4f5; }
+  .sliders { background:#18181b; border:1px solid #27272a; border-radius:14px; padding:16px; margin-top:20px; }
+  .srow { display:flex; justify-content:space-between; font-size:11px; letter-spacing:1px; font-weight:600; color:#a1a1aa; margin-bottom:4px; }
+  .sval { color:#f4f4f5; font-weight:700; }
+  input[type=range] { width:100%; accent-color:#f4f4f5; height:2px; margin:6px 0 16px; }
+  .launch { margin-top:28px; height:52px; width:100%; background:#f4f4f5; color:#09090b; border:none; border-radius:12px; font-size:13px; letter-spacing:1.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+  #stage { position:fixed; inset:0; display:none; z-index:50; cursor:pointer; overflow:hidden; }
+  #stage.show { display:block; }
+  #stage .led { position:absolute; inset:0; }
+  #stageText { position:absolute; left:0; top:0; white-space:nowrap; font-weight:900; will-change:transform; }
+  #hint { position:absolute; bottom:18px; left:50%; transform:translateX(-50%); font-size:11px; letter-spacing:1px; padding:6px 14px; border-radius:20px; background:rgba(0,0,0,.4); }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#323232; color:#fff; padding:10px 18px; border-radius:8px; font-size:14px; opacity:0; transition:.2s; z-index:60; pointer-events:none; }
+  .toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<header>PRECISION DISPLAY</header>
+<div class="panel">
+  <div class="monitor" id="monitor">
+    <canvas class="grid" id="monitorGrid"></canvas>
+    <div class="tag" id="monitorTag">STATIC SIGN</div>
+    <div class="txt" id="monitorText">接机 · 张三先生</div>
+  </div>
+
+  <div class="title">MOTION MODE / 呈现模式</div>
+  <div class="modes" id="modes"></div>
+
+  <div class="field"><input id="text" value="接机 · 张三先生" maxlength="60" /></div>
+
+  <div class="title">COLORWAYS / 色彩方案</div>
+  <div class="palettes" id="palettes"></div>
+
+  <div class="title">TYPOGRAPHY / 字体引擎</div>
+  <div class="engines" id="engines"></div>
+
+  <div class="title">PARAMETERS</div>
+  <div class="sliders" id="sliders">
+    <div id="speedWrap" style="display:none">
+      <div class="srow"><span>滚动速度 / SPEED</span><span class="sval" id="speedVal">1.0x</span></div>
+      <input type="range" id="speed" min="0.4" max="2.5" step="0.1" value="1" />
+    </div>
+    <div class="srow"><span>字阶比例 / SCALE</span><span class="sval" id="scaleVal">100%</span></div>
+    <input type="range" id="scale" min="0.6" max="1.6" step="0.05" value="1" />
+  </div>
+
+  <button class="launch" id="launch">⛶ LAUNCH STATIC SIGN / 全屏静止标牌</button>
+</div>
+
+<div id="stage">
+  <canvas class="led" id="ledGrid"></canvas>
+  <div id="stageText">接机 · 张三先生</div>
+  <div id="hint">单击 定格/恢复 · 双击 退出</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const PALETTES = [
+  { name:'曜石极黑', fg:'#F4F4F5', bg:'#09090B' },
+  { name:'琥珀金标', fg:'#F59E0B', bg:'#0C0A09' },
+  { name:'极光冷绿', fg:'#10B981', bg:'#022C22' },
+  { name:'钛银高反', fg:'#09090B', bg:'#E4E4E7' },
+  { name:'深空蓝调', fg:'#38BDF8', bg:'#082F49' },
+];
+const ENGINES = [
+  { key:'swissBold', label:'瑞士排版', spacing:-2, mono:false },
+  { key:'dotMatrix', label:'工业点阵', spacing:4, mono:true },
+  { key:'pureMono', label:'单色纯粹', spacing:0, mono:false },
+];
+const MODES = [
+  { key:'staticSign', label:'静止标牌', desc:'大字定格 · 自适应' },
+  { key:'marquee', label:'平滑滚动', desc:'横向跑马灯 · 调速' },
+];
+
+let state = { text:'接机 · 张三先生', palette:PALETTES[0], engine:ENGINES[0], mode:'staticSign', speed:1, scale:1 };
+
+const $ = id => document.getElementById(id);
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1200); }
+
+// 模式
+const mb=$('modes');
+MODES.forEach(m=>{
+  const el=document.createElement('div'); el.className='mode';
+  el.innerHTML=`<div class="m1">${m.label}</div><div class="m2">${m.desc}</div>`;
+  el.onclick=()=>{ state.mode=m.key; syncUI(); }; mb.appendChild(el);
+});
+// 调色
+const pb=$('palettes');
+PALETTES.forEach(p=>{
+  const el=document.createElement('div'); el.className='palette';
+  el.innerHTML=`<span class="dot" style="background:${p.fg}"></span><span class="nm">${p.name}</span>`;
+  el.onclick=()=>{ state.palette=p; syncUI(); }; pb.appendChild(el);
+});
+// 引擎
+const eb=$('engines');
+ENGINES.forEach(e=>{
+  const el=document.createElement('div'); el.className='engine'; el.textContent=e.label;
+  el.onclick=()=>{ state.engine=e; syncUI(); }; eb.appendChild(el);
+});
+// 输入与滑块
+$('text').oninput=e=>{ state.text=e.target.value; syncUI(); };
+$('speed').oninput=e=>{ state.speed=parseFloat(e.target.value); $('speedVal').textContent=state.speed.toFixed(1)+'x'; };
+$('scale').oninput=e=>{ state.scale=parseFloat(e.target.value); $('scaleVal').textContent=Math.round(state.scale*100)+'%'; };
+
+function drawGrid(canvas, color, step, isDot){
+  const r=canvas.getBoundingClientRect(); canvas.width=r.width; canvas.height=r.height;
+  const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle=color; ctx.strokeStyle=color;
+  if(isDot){ for(let x=step/2;x<canvas.width;x+=step) for(let y=step/2;y<canvas.height;y+=step){ ctx.beginPath(); ctx.arc(x,y,1.5,0,Math.PI*2); ctx.fill(); } }
+  else { for(let x=0;x<canvas.width;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); } for(let y=0;y<canvas.height;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); } }
+}
+
+function syncUI(){
+  document.querySelectorAll('.mode').forEach((el,i)=>el.classList.toggle('active', MODES[i].key===state.mode));
+  document.querySelectorAll('.palette').forEach((el,i)=>el.classList.toggle('active', PALETTES[i]===state.palette));
+  document.querySelectorAll('.engine').forEach((el,i)=>el.classList.toggle('active', ENGINES[i]===state.engine));
+  // 监视器
+  const m=$('monitor'); m.style.background=state.palette.bg;
+  $('monitorTag').style.color=state.palette.fg; $('monitorTag').style.opacity=.4;
+  $('monitorTag').textContent=(state.mode==='staticSign'?'STATIC SIGN':'MARQUEE')+' · '+state.engine.label;
+  const mt=$('monitorText'); mt.textContent=state.text||'PREVIEW'; mt.style.color=state.palette.fg;
+  mt.style.fontSize=(32*state.scale)+'px'; mt.style.letterSpacing=state.engine.spacing+'px'; mt.style.fontFamily=state.engine.mono?'monospace':'inherit';
+  drawGrid($('monitorGrid'), state.palette.fg, 20, false); $('monitorGrid').style.opacity=.05;
+  // 速度条仅滚动模式显示
+  $('speedWrap').style.display = state.mode==='marquee' ? 'block' : 'none';
+  $('launch').textContent = state.mode==='staticSign' ? '⛶ LAUNCH STATIC SIGN / 全屏静止标牌' : '⛶ LAUNCH MARQUEE / 全屏滚动跑马灯';
+}
+
+// 全屏舞台
+let raf=null, startT=0, frozen=false, cw=0, ch=0;
+function computeStaticFontSize(){
+  // Auto-Fit：以 maxAllowedHeight 为基准，若文字宽度超出可用宽度则等比缩小，绝不截断
+  const baseH = ch*0.78*state.scale;
+  const fontFamily = state.engine.mono?'monospace':'inherit';
+  const letterSpacing = state.engine.spacing+'px';
+  // 先按基准高度量宽度
+  const probe=document.createElement('span');
+  probe.style.position='absolute'; probe.style.visibility='hidden';
+  probe.style.fontWeight='900'; probe.style.whiteSpace='nowrap';
+  probe.style.fontSize=baseH+'px'; probe.style.fontFamily=fontFamily; probe.style.letterSpacing=letterSpacing;
+  probe.textContent=state.text; document.body.appendChild(probe);
+  const textW=probe.offsetWidth; document.body.removeChild(probe);
+  const availW = cw*0.9; // 左右各留 5%
+  let fontSize=baseH;
+  if(textW>availW){ fontSize = baseH * (availW/textW); }
+  return fontSize;
+}
+function launch(){
+  if(!state.text.trim()){ toast('请输入标牌内容'); return; }
+  const st=$('stage'); st.style.background=state.palette.bg;
+  const txt=$('stageText'); txt.textContent=state.text;
+  const isLight = state.palette.bg.toLowerCase()==='#e4e4e7';
+  $('hint').style.color = isLight ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.6)';
+  $('hint').style.display='flex';
+  cw=window.innerWidth; ch=window.innerHeight;
+  if(state.engine.key==='dotMatrix'){ drawGrid($('ledGrid'), state.palette.fg, 14, true); $('ledGrid').style.opacity=.08; $('ledGrid').style.display='block'; }
+  else $('ledGrid').style.display='none';
+  st.classList.add('show');
+  if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+  startT=performance.now(); frozen=false; cancelAnimationFrame(raf); loop();
+  setTimeout(()=>$('hint').style.display='none', 3000);
+}
+function loop(){
+  const txt=$('stageText'); txt.style.color=state.palette.fg;
+  txt.style.fontFamily=state.engine.mono?'monospace':'inherit';
+  txt.style.letterSpacing=state.engine.spacing+'px';
+  if(state.mode==='staticSign'){
+    const fs=computeStaticFontSize(); txt.style.fontSize=fs+'px';
+    txt.style.left='50%'; txt.style.top='50%'; txt.style.transform='translate(-50%,-50%)';
+  } else {
+    const h=window.innerHeight; txt.style.fontSize=(h*0.58*state.scale)+'px';
+    const w=window.innerWidth, tw=txt.offsetWidth, total=w+tw;
+    if(!frozen){ const dur=7000/state.speed; const prog=((performance.now()-startT)%dur)/dur; const x=w-prog*total; txt.style.transform=`translate(${x}px, ${(h-txt.offsetHeight)/2}px)`; txt.style.left='0'; txt.style.top='0'; }
+  }
+  raf=requestAnimationFrame(loop);
+}
+$('launch').onclick=launch;
+let lastTap=0;
+$('stage').addEventListener('click',()=>{
+  const now=performance.now();
+  if(now-lastTap<300){ cancelAnimationFrame(raf); $('stage').classList.remove('show'); if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); return; }
+  lastTap=now;
+  if(state.mode==='staticSign') return; // 静止模式无需定格
+  frozen=!frozen;
+});
+window.addEventListener('resize',()=>{ if($('stage').classList.contains('show')){ cw=window.innerWidth; ch=window.innerHeight; } else syncUI(); });
+syncUI();
+</script>
+</body>
+</html>

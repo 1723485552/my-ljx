@@ -15,32 +15,3 @@ migrate_working_dir/
 *.ipr
 *.iws
 .idea/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-pubspec.lock.bak
-
-# Generated plugin registries
-/lib/generated/**
-
-# Local tool bundles (offline caches)
-assets/tools/*.bundle.local.json
-
-# Legacy reference Flutter project (not part of this native rewrite)
-/gongjuapp-master/
-
-# Android build outputs
-/android/build/
-/android/app/build/
-*.apk
-
-# Build/debug logs (generated, not source)
-*.txt
-!NOTICE.txt

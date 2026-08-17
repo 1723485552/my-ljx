@@ -1,0 +1,206 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.novatoolbox.agentforge"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="35" />
+10    <!--
+11         The INTERNET permission is required for development. Specifically,
+12         the Flutter tool needs it to communicate with the running application
+13         to allow setting breakpoints, to provide hot reload, etc.
+14    -->
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->E:\NovaToolBox\android\app\src\debug\AndroidManifest.xml:6:5-66
+15-->E:\NovaToolBox\android\app\src\debug\AndroidManifest.xml:6:22-64
+16    <!-- 悬浮窗权限：允许在任意 App 界面顶层弹出提示 -->
+17    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 后台前台常驻服务权限 -->
+17-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:4:5-78
+17-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:4:22-75
+18    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+18-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:6:5-77
+18-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:6:22-74
+19    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+19-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:7:5-87
+19-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:7:22-84
+20    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Android 13+ 图片读取权限 -->
+20-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:8:5-77
+20-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:8:22-74
+21    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- Android 12 及以下兼容权限 -->
+21-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:10:5-76
+21-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:10:22-73
+22    <uses-permission
+22-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:12:5-107
+23        android:name="android.permission.READ_EXTERNAL_STORAGE"
+23-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:12:22-77
+24        android:maxSdkVersion="32" />
+24-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:12:78-104
+25    <uses-permission
+25-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:13:5-108
+26        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+26-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:13:22-78
+27        android:maxSdkVersion="29" /> <!-- Android 11+ 全部文件管理（用于 100% 免弹窗静默删除引导） -->
+27-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:13:79-105
+28    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+28-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:15:5-82
+28-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:15:22-79
+29
+30    <permission
+30-->[androidx.core:core:1.15.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\7c81591b5c0a7be3bd2d65a2f0f7c93e\workspace\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+31        android:name="com.novatoolbox.agentforge.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+31-->[androidx.core:core:1.15.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\7c81591b5c0a7be3bd2d65a2f0f7c93e\workspace\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+32        android:protectionLevel="signature" />
+32-->[androidx.core:core:1.15.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\7c81591b5c0a7be3bd2d65a2f0f7c93e\workspace\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+33
+34    <uses-permission android:name="com.novatoolbox.agentforge.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+34-->[androidx.core:core:1.15.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\7c81591b5c0a7be3bd2d65a2f0f7c93e\workspace\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+34-->[androidx.core:core:1.15.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\7c81591b5c0a7be3bd2d65a2f0f7c93e\workspace\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
+35
+36    <application
+36-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:17:5-58:19
+37        android:allowBackup="true"
+37-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:20:9-35
+38        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+38-->[androidx.core:core:1.15.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\7c81591b5c0a7be3bd2d65a2f0f7c93e\workspace\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+39        android:debuggable="true"
+40        android:extractNativeLibs="false"
+41        android:icon="@mipmap/ic_launcher"
+41-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:19:9-43
+42        android:label="NovaToolBox"
+42-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:18:9-36
+43        android:theme="@style/Theme.NovaToolBox" >
+43-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:21:9-49
+44
+45        <!-- 截屏后台监听服务 -->
+46        <service
+46-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:24:9-27:40
+47            android:name="com.novatoolbox.agentforge.features.screenshot.data.ScreenshotWatcherService"
+47-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:25:13-78
+48            android:exported="false"
+48-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:27:13-37
+49            android:foregroundServiceType="dataSync" />
+49-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:26:13-53
+50
+51        <!-- 跨应用呼起系统删除弹窗的透明中转 Activity -->
+52        <activity
+52-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:30:9-33:40
+53            android:name="com.novatoolbox.agentforge.features.screenshot.data.TransparentDeleteActivity"
+53-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:31:13-79
+54            android:exported="false"
+54-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:33:13-37
+55            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+55-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:32:13-72
+56
+57        <!-- 原生 Compose 导航宿主 -->
+58        <activity
+58-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:36:9-46:20
+59            android:name="com.novatoolbox.agentforge.MainActivity"
+59-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:37:13-41
+60            android:exported="true"
+60-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:38:13-36
+61            android:hardwareAccelerated="true"
+61-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:41:13-47
+62            android:launchMode="singleTop"
+62-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:39:13-43
+63            android:theme="@style/Theme.NovaToolBox" >
+63-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:40:13-53
+64            <intent-filter>
+64-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:42:13-45:29
+65                <action android:name="android.intent.action.MAIN" />
+65-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:43:17-69
+65-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:43:25-66
+66
+67                <category android:name="android.intent.category.LAUNCHER" />
+67-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:44:17-77
+67-->E:\NovaToolBox\android\app\src\main\AndroidManifest.xml:44:27-74
+68            </intent-filter>
+69        </activity>
+70
+71        <!-- 文件导出共享（MoodHeatmap CSV 导出） -->
+72        <provider
+73            android:name="androidx.core.content.FileProvider"
+74            android:authorities="com.novatoolbox.agentforge.fileprovider"
+75            android:exported="false"
+76            android:grantUriPermissions="true" >
+77            <meta-data
+78                android:name="android.support.FILE_PROVIDER_PATHS"
+79                android:resource="@xml/file_paths" />
+80        </provider>
+81
+82        <activity
+82-->[androidx.compose.ui:ui-tooling-android:1.8.2] C:\Users\17234\.gradle\caches\9.1.0\transforms\0c9179d2f535a67cfff0d965398b79ab\workspace\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+83            android:name="androidx.compose.ui.tooling.PreviewActivity"
+83-->[androidx.compose.ui:ui-tooling-android:1.8.2] C:\Users\17234\.gradle\caches\9.1.0\transforms\0c9179d2f535a67cfff0d965398b79ab\workspace\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+84            android:exported="true" />
+84-->[androidx.compose.ui:ui-tooling-android:1.8.2] C:\Users\17234\.gradle\caches\9.1.0\transforms\0c9179d2f535a67cfff0d965398b79ab\workspace\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+85
+86        <provider
+86-->[androidx.emoji2:emoji2:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\302a24023108704c65e06770fdcdeabb\workspace\transformed\emoji2-1.4.0\AndroidManifest.xml:24:9-32:20
+87            android:name="androidx.startup.InitializationProvider"
+87-->[androidx.emoji2:emoji2:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\302a24023108704c65e06770fdcdeabb\workspace\transformed\emoji2-1.4.0\AndroidManifest.xml:25:13-67
+88            android:authorities="com.novatoolbox.agentforge.androidx-startup"
+88-->[androidx.emoji2:emoji2:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\302a24023108704c65e06770fdcdeabb\workspace\transformed\emoji2-1.4.0\AndroidManifest.xml:26:13-68
+89            android:exported="false" >
+89-->[androidx.emoji2:emoji2:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\302a24023108704c65e06770fdcdeabb\workspace\transformed\emoji2-1.4.0\AndroidManifest.xml:27:13-37
+90            <meta-data
+90-->[androidx.emoji2:emoji2:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\302a24023108704c65e06770fdcdeabb\workspace\transformed\emoji2-1.4.0\AndroidManifest.xml:29:13-31:52
+91                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+91-->[androidx.emoji2:emoji2:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\302a24023108704c65e06770fdcdeabb\workspace\transformed\emoji2-1.4.0\AndroidManifest.xml:30:17-75
+92                android:value="androidx.startup" />
+92-->[androidx.emoji2:emoji2:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\302a24023108704c65e06770fdcdeabb\workspace\transformed\emoji2-1.4.0\AndroidManifest.xml:31:17-49
+93            <meta-data
+93-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\17234\.gradle\caches\9.1.0\transforms\5e7463977a92a9f0ee17bd61bf90e774\workspace\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+94                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+94-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\17234\.gradle\caches\9.1.0\transforms\5e7463977a92a9f0ee17bd61bf90e774\workspace\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+95                android:value="androidx.startup" />
+95-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\17234\.gradle\caches\9.1.0\transforms\5e7463977a92a9f0ee17bd61bf90e774\workspace\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+96            <meta-data
+96-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
+97                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+97-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
+98                android:value="androidx.startup" />
+98-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
+99        </provider>
+100
+101        <receiver
+101-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
+102            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+102-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
+103            android:directBootAware="false"
+103-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
+104            android:enabled="true"
+104-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
+105            android:exported="true"
+105-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
+106            android:permission="android.permission.DUMP" >
+106-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
+107            <intent-filter>
+107-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
+108                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+108-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
+108-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
+109            </intent-filter>
+110            <intent-filter>
+110-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
+111                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+111-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
+111-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
+112            </intent-filter>
+113            <intent-filter>
+113-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
+114                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+114-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
+114-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
+115            </intent-filter>
+116            <intent-filter>
+116-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
+117                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+117-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
+117-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\17234\.gradle\caches\9.1.0\transforms\ca80213fd196e8cdb4fc7d6038793bc2\workspace\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
+118            </intent-filter>
+119        </receiver>
+120    </application>
+121
+122</manifest>
