@@ -32,3 +32,15 @@ pubspec.lock.bak
 
 # Local tool bundles (offline caches)
 assets/tools/*.bundle.local.json
+
+# Legacy reference Flutter project (not part of this native rewrite)
+/gongjuapp-master/
+
+# Android build outputs
+/android/build/
+/android/app/build/
+*.apk
+
+# Build/debug logs (generated, not source)
+*.txt
+!NOTICE.txt
