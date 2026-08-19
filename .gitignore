@@ -15,3 +15,18 @@ migrate_working_dir/
 *.ipr
 *.iws
 .idea/
+
+# Build artifacts (Gradle / Android)
+build/
+.gradle/
+**/build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local build logs
+build_log*.txt
+build_clean.txt
+*.apk
+*.aar

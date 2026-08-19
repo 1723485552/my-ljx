@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- 网络权限：用于即时轻量翻译请求 -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- 悬浮窗权限：允许在任意 App 界面顶层弹出提示 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!-- 后台前台常驻服务权限 -->
@@ -18,6 +20,7 @@
         android:label="NovaToolBox"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.NovaToolBox">
 
         <!-- 截屏后台监听服务 -->

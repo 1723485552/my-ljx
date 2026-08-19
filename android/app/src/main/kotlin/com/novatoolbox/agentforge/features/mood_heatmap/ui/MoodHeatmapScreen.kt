@@ -39,6 +39,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -106,6 +108,9 @@ fun MoodHeatmapScreen() {
         moodRecords[d]?.mood != null && moodRecords[d]?.mood != MoodLevel.EMPTY
     }
 
+    val scope = rememberCoroutineScope()
+    var isExporting by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -165,12 +170,24 @@ fun MoodHeatmapScreen() {
 
                     FilledTonalButton(
                         onClick = {
-                            Toast.makeText(
-                                context,
-                                "已生成 ${currentYearMonth.monthValue} 月心绪快照",
-                                Toast.LENGTH_SHORT,
-                            ).show()
+                            if (isExporting) return@FilledTonalButton
+                            isExporting = true
+                            scope.launch {
+                                Toast.makeText(context, "正在生成心绪海报...", Toast.LENGTH_SHORT).show()
+                                val result = MoodPosterExporter.exportPosterToGallery(
+                                    context = context,
+                                    yearMonth = currentYearMonth,
+                                    records = moodRecords,
+                                )
+                                isExporting = false
+                                result.onSuccess { path ->
+                                    Toast.makeText(context, "已成功保存至系统相册！\n$path", Toast.LENGTH_LONG).show()
+                                }.onFailure { e ->
+                                    Toast.makeText(context, "导出失败: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         },
+                        enabled = !isExporting,
                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                         colors = ButtonDefaults.filledTonalButtonColors(
                             containerColor = NativeDesignTokens.cardDark,
@@ -181,7 +198,7 @@ fun MoodHeatmapScreen() {
                     ) {
                         Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(12.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("导出", fontSize = 11.sp)
+                        Text(if (isExporting) "导出中..." else "导出", fontSize = 11.sp)
                     }
                 }
 
